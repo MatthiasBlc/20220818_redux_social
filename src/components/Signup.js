@@ -1,25 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-import { loggedAtom } from '../atoms/user';
-import { useSetAtom } from 'jotai';
-import { currentUserAtom } from '../atoms/currentUser';
+import { useDispatch } from 'react-redux';
+import { userLogin } from '../stores/action';
+// import { loggedAtom } from '../atoms/user';
+// import { useSetAtom } from 'jotai';
+// import { currentUserAtom } from '../atoms/currentUser';
 const API_URL = "http://localhost:1337/auth/local/register"
-
 function Signup() {
 
-    const userID = useSetAtom(currentUserAtom);
-    const logged = useSetAtom(loggedAtom);
+    // const userID = useSetAtom(currentUserAtom);
+    // const logged = useSetAtom(loggedAtom);
+
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const dispatch = useDispatch();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
+        setUsername(e.target.username.value);
+        setEmail(e.target.email.value);
+        setPassword(e.target.password.value);
         const data = {
             username: e.target.username.value,
             email: e.target.email.value,
             password: e.target.password.value,
         };
-
-        console.log(typeof JSON.stringify(data));
 
         fetch(API_URL, {
             method: "POST",
@@ -29,14 +35,18 @@ function Signup() {
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            dispatch(userLogin(data.jwt, data.user.id))
+            console.log(dispatch);
             Cookies.set('token', data.jwt)
-            console.log(Cookies.get('token'));
-            logged(true);
-            userID(JSON.stringify(data.user));
+            Cookies.set('id', data.user.id )
+
+
+            // logged(true);
+            // userID(JSON.stringify(data.user));
         })
         .catch(error => {
             console.log(error.message);
-            logged(false);
+            // logged(false);
             })
     }
 

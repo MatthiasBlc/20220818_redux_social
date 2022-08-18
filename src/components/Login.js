@@ -1,15 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-import { useSetAtom } from 'jotai';
-import { loggedAtom } from '../atoms/user';
+import { useDispatch } from 'react-redux';
+import { userLogin } from '../stores/action';
+// import { useSetAtom } from 'jotai';
+// import { loggedAtom } from '../atoms/user';
 const API_URL = "http://localhost:1337/auth/local/"
 
 function Login() {
 
-    const logged = useSetAtom(loggedAtom)
+  // const logged = useSetAtom(loggedAtom)
+  //const [emailapp, setEmail] = useAtom(emailAtom);
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+
+  const dispatch = useDispatch()
+  
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setIdentifier(e.target.identifier.value)
+        setPassword(e.target.password.value)
 
         const data = {
             identifier: e.target.identifier.value,
@@ -31,16 +41,18 @@ function Login() {
                 return;
             }
 
-            console.log(data);
+            dispatch(userLogin(data.jwt, data.user.id))
+            console.log(data.jwt);
             Cookies.set('token', data.jwt)
+            Cookies.set('id', data.user.id)
             // console.log(Cookies.get('token'));
-            logged(true);
+            // logged(true);
         })
         .catch(error => {
             alert("erreur");
             console.log(error.message);
             
-            logged(false);
+            // logged(false);
             })
     }
 

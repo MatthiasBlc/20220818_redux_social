@@ -1,1 +1,2 @@
-### Atelier JOTAI & state globale : projet THP mini réseau social pour la promo Printemps2022.
+### Projet éducatif Redux Collaboratif.
+Ce readme est donc très complet
