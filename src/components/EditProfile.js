@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useState } from "react";
 import Cookies from 'js-cookie';
 import { useSetAtom } from 'jotai';
 import { loggedAtom } from '../atoms/user';
+import { useSelector } from "react-redux";
+
 // const API_URL = "http://localhost:1337/auth/local/"
 
 
-function EditProfile({userID}) {
+function EditProfile() {
 
-    const token = Cookies.get('token');
-    const logged = useSetAtom(loggedAtom)
+    // const logged = useSetAtom(loggedAtom)
+
+    const JWT = useSelector((state) => state.JWT);
+    console.log(JWT);
+    const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setUsername(e.target.username.value)
+        setEmail(e.target.email.value)
 
         const data = {
             username: e.target.username.value,
@@ -20,9 +28,9 @@ function EditProfile({userID}) {
 
         // console.log(typeof JSON.stringify(data));
 
-        fetch(`http://localhost:1337/users/${userID}` , {
+        fetch(`http://localhost:1337/users/me` , {
             method: "PUT",
-            headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${token}` },
+            headers: { "Content-Type": "application/json", 'Authorization': `Bearer ${JWT}` },
             body: JSON.stringify(data)
         })
         .then(response => response.json())

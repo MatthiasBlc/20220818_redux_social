@@ -1,25 +1,29 @@
 import React, { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
-import EditProfile from "./EditProfile";
-
-const API_URL = "http://localhost:1337/users/me";
+import EditProfile from '../components/EditProfile'
+import { useSelector } from "react-redux";
+import { useDispatch } from 'react-redux';
 
 function Profile() {
 
-	const [ userData, setUserData ] = useState(null);
 
-	const token = Cookies.get('token');
-
+	const JWT = useSelector((state) => state.JWT);
+	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
+	// const [ userData, setUserData ] = useState(null);
 	useEffect( () => {
 
-		fetch(API_URL, {
-			method: "GET",
-			headers: { 'Authorization': `Bearer ${token}`}
+		fetch("http://localhost:1337/users/me", {
+			method: "get",
+			headers: { 'Authorization': `Bearer ${JWT}`}
 		})
 		.then(response => response.json())
 		.then(data => {
 			console.log(data);
-			setUserData(data);
+			setEmail(data.email);
+      setUsername(data.username);
+		// setUserData(data)
+		  
 		})
 		.catch(error => console.log(error.message))
 
@@ -30,14 +34,12 @@ function Profile() {
 			{" "}
 			<h1 className='text-3xl font-bold underline'>Hello Profile !</h1>
 
-			{
-				userData && <>
-								<p>username : {userData.username}</p>
-								<p>email : {userData.email}</p>
-								<EditProfile userID={userData.id}/>
-							</>
-							
-			}
+			<h2>Vos infos : </h2>
+			<p>{email}</p>
+			<p>{username}</p>
+
+
+			<EditProfile/>
 
 			
 		</div>
